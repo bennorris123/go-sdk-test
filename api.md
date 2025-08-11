@@ -56,13 +56,3 @@ Methods:
 
 - <code title="get /v1/models/{model}">client.Models.<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk#ModelService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, model <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk">relaxaitest</a>.<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk#Model">Model</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/models">client.Models.<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk#ModelService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk">relaxaitest</a>.<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk#ModelListResponse">ModelListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-# Tools
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/relax-ai/go-sdk">relaxaitest</a>.<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk#ToolScrapResponse">ToolScrapResponse</a>
-
-Methods:
-
-- <code title="post /v1/tools/scrap">client.Tools.<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk#ToolService.Scrap">Scrap</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/relax-ai/go-sdk">relaxaitest</a>.<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk#ToolScrapParams">ToolScrapParams</a>) ([]<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk">relaxaitest</a>.<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk#ToolScrapResponse">ToolScrapResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>

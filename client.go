@@ -21,7 +21,6 @@ type Client struct {
 	Embeddings  EmbeddingService
 	Health      HealthService
 	Models      ModelService
-	Tools       ToolService
 }
 
 // DefaultClientOptions read from the environment (RELAXAI_TEST_API_KEY,
@@ -51,7 +50,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Embeddings = NewEmbeddingService(opts...)
 	r.Health = NewHealthService(opts...)
 	r.Models = NewModelService(opts...)
-	r.Tools = NewToolService(opts...)
 
 	return
 }
