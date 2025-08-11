@@ -6,8 +6,8 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/stainless-sdks/relaxai-test-go/internal/requestconfig"
-	"github.com/stainless-sdks/relaxai-test-go/option"
+	"github.com/relax-ai/go-sdk/internal/requestconfig"
+	"github.com/relax-ai/go-sdk/option"
 )
 
 // HealthService contains methods and other services that help with interacting

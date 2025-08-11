@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/relaxai-test-go"
-	"github.com/stainless-sdks/relaxai-test-go/internal/testutil"
-	"github.com/stainless-sdks/relaxai-test-go/option"
+	"github.com/relax-ai/go-sdk"
+	"github.com/relax-ai/go-sdk/internal/testutil"
+	"github.com/relax-ai/go-sdk/option"
 )
 
 func TestUsage(t *testing.T) {

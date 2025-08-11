@@ -2,7 +2,7 @@
 package json
 
 import (
-	"github.com/stainless-sdks/relaxai-test-go/internal/encoding/json/shims"
+	"github.com/relax-ai/go-sdk/internal/encoding/json/shims"
 	"reflect"
 	"time"
 )

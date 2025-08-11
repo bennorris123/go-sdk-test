@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/relaxai-test-go/packages/param"
+	"github.com/relax-ai/go-sdk/packages/param"
 )
 
 type Struct struct {

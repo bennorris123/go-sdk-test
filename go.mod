@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/relaxai-test-go
+module github.com/relax-ai/go-sdk
 
 go 1.21
 

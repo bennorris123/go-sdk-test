@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/relaxai-test-go/internal"
-	"github.com/stainless-sdks/relaxai-test-go/internal/apierror"
-	"github.com/stainless-sdks/relaxai-test-go/internal/apiform"
-	"github.com/stainless-sdks/relaxai-test-go/internal/apiquery"
+	"github.com/relax-ai/go-sdk/internal"
+	"github.com/relax-ai/go-sdk/internal/apierror"
+	"github.com/relax-ai/go-sdk/internal/apiform"
+	"github.com/relax-ai/go-sdk/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

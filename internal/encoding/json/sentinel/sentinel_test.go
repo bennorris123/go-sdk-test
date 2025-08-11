@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/stainless-sdks/relaxai-test-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/relaxai-test-go/packages/param"
+	"github.com/relax-ai/go-sdk/internal/encoding/json/sentinel"
+	"github.com/relax-ai/go-sdk/packages/param"
 	"reflect"
 	"slices"
 	"testing"
