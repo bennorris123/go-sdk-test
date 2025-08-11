@@ -3,8 +3,8 @@ package apijson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/relaxai-test-go/internal/apijson"
-	"github.com/stainless-sdks/relaxai-test-go/packages/param"
+	"github.com/relax-ai/go-sdk/internal/apijson"
+	"github.com/relax-ai/go-sdk/packages/param"
 	"reflect"
 	"testing"
 )

@@ -7,11 +7,11 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/stainless-sdks/relaxai-test-go/internal/apijson"
-	"github.com/stainless-sdks/relaxai-test-go/internal/requestconfig"
-	"github.com/stainless-sdks/relaxai-test-go/option"
-	"github.com/stainless-sdks/relaxai-test-go/packages/param"
-	"github.com/stainless-sdks/relaxai-test-go/packages/respjson"
+	"github.com/relax-ai/go-sdk/internal/apijson"
+	"github.com/relax-ai/go-sdk/internal/requestconfig"
+	"github.com/relax-ai/go-sdk/option"
+	"github.com/relax-ai/go-sdk/packages/param"
+	"github.com/relax-ai/go-sdk/packages/respjson"
 )
 
 // ChatService contains methods and other services that help with interacting with
