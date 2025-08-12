@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/relax-ai/go-sdk/internal/requestconfig"
+	"github.com/bennorris123/go-sdk-test/internal/requestconfig"
 	"github.com/tidwall/sjson"
 )
 
@@ -19,7 +19,7 @@ import (
 // which can be supplied to clients, services, and methods. You can read more about this functional
 // options pattern in our [README].
 //
-// [README]: https://pkg.go.dev/github.com/relax-ai/go-sdk#readme-requestoptions
+// [README]: https://pkg.go.dev/github.com/bennorris123/go-sdk-test#readme-requestoptions
 type RequestOption = requestconfig.RequestOption
 
 // WithBaseURL returns a RequestOption that sets the BaseURL for the client.

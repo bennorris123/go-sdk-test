@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/relax-ai/go-sdk/internal/requestconfig"
-	"github.com/relax-ai/go-sdk/option"
+	"github.com/bennorris123/go-sdk-test/internal/requestconfig"
+	"github.com/bennorris123/go-sdk-test/option"
 )
 
 // Client creates a struct with services and top level methods that help with

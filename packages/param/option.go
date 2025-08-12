@@ -3,7 +3,7 @@ package param
 import (
 	"encoding/json"
 	"fmt"
-	shimjson "github.com/relax-ai/go-sdk/internal/encoding/json"
+	shimjson "github.com/bennorris123/go-sdk-test/internal/encoding/json"
 	"time"
 )
 

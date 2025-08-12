@@ -2,7 +2,7 @@ package paramutil
 
 import (
 	"fmt"
-	"github.com/relax-ai/go-sdk/packages/param"
+	"github.com/bennorris123/go-sdk-test/packages/param"
 	"reflect"
 )
 
