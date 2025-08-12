@@ -1,4 +1,4 @@
-module github.com/relax-ai/go-sdk
+module github.com/bennorris123/go-sdk-test
 
 go 1.21
 

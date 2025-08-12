@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/relax-ai/go-sdk/internal/apijson"
-	"github.com/relax-ai/go-sdk/internal/requestconfig"
-	"github.com/relax-ai/go-sdk/option"
-	"github.com/relax-ai/go-sdk/packages/respjson"
+	"github.com/bennorris123/go-sdk-test/internal/apijson"
+	"github.com/bennorris123/go-sdk-test/internal/requestconfig"
+	"github.com/bennorris123/go-sdk-test/option"
+	"github.com/bennorris123/go-sdk-test/packages/respjson"
 )
 
 // ModelService contains methods and other services that help with interacting with
