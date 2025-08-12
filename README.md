@@ -50,7 +50,7 @@ import (
 
 func main() {
 	client := relaxaitest.NewClient(
-		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("RELAXAI_TEST_API_KEY")
+		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("RELAXAI_API_KEY")
 	)
 	response, err := client.Chat.NewCompletion(context.TODO(), relaxaitest.ChatNewCompletionParams{
 		Messages: []relaxaitest.ChatCompletionMessageParam{{
