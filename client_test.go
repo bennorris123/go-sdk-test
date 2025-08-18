@@ -10,9 +10,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/relaxai-test-go"
-	"github.com/stainless-sdks/relaxai-test-go/internal"
-	"github.com/stainless-sdks/relaxai-test-go/option"
+	"github.com/bennorris123/go-sdk-test"
+	"github.com/bennorris123/go-sdk-test/internal"
+	"github.com/bennorris123/go-sdk-test/option"
 )
 
 type closureTransport struct {

@@ -2,7 +2,7 @@ package apijson
 
 import (
 	"errors"
-	"github.com/stainless-sdks/relaxai-test-go/packages/param"
+	"github.com/bennorris123/go-sdk-test/packages/param"
 	"reflect"
 
 	"github.com/tidwall/gjson"

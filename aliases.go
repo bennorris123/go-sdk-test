@@ -3,9 +3,9 @@
 package relaxaitest
 
 import (
-	"github.com/stainless-sdks/relaxai-test-go/internal/apierror"
-	"github.com/stainless-sdks/relaxai-test-go/packages/param"
-	"github.com/stainless-sdks/relaxai-test-go/shared"
+	"github.com/bennorris123/go-sdk-test/internal/apierror"
+	"github.com/bennorris123/go-sdk-test/packages/param"
+	"github.com/bennorris123/go-sdk-test/shared"
 )
 
 // aliased to make [param.APIUnion] private when embedding
