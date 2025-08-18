@@ -7,27 +7,25 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/bennorris123/go-sdk-test/internal/requestconfig"
-	"github.com/bennorris123/go-sdk-test/option"
+	"github.com/stainless-sdks/relaxai-test-go/internal/requestconfig"
+	"github.com/stainless-sdks/relaxai-test-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with
-// interacting with the relaxai-test API. You should not instantiate this client
+// interacting with the relaxai API. You should not instantiate this client
 // directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options     []option.RequestOption
-	Chat        ChatService
-	Completions CompletionService
-	Embeddings  EmbeddingService
-	Health      HealthService
-	Models      ModelService
+	Options    []option.RequestOption
+	Chat       ChatService
+	Embeddings EmbeddingService
+	Models     ModelService
 }
 
 // DefaultClientOptions read from the environment (RELAXAI_API_KEY,
-// RELAXAI_TEST_BASE_URL). This should be used to initialize new clients.
+// RELAXAI_BASE_URL). This should be used to initialize new clients.
 func DefaultClientOptions() []option.RequestOption {
 	defaults := []option.RequestOption{option.WithEnvironmentProduction()}
-	if o, ok := os.LookupEnv("RELAXAI_TEST_BASE_URL"); ok {
+	if o, ok := os.LookupEnv("RELAXAI_BASE_URL"); ok {
 		defaults = append(defaults, option.WithBaseURL(o))
 	}
 	if o, ok := os.LookupEnv("RELAXAI_API_KEY"); ok {
@@ -37,7 +35,7 @@ func DefaultClientOptions() []option.RequestOption {
 }
 
 // NewClient generates a new client with the default option read from the
-// environment (RELAXAI_API_KEY, RELAXAI_TEST_BASE_URL). The option passed in as
+// environment (RELAXAI_API_KEY, RELAXAI_BASE_URL). The option passed in as
 // arguments are applied after these default arguments, and all option will be
 // passed down to the services and requests that this client makes.
 func NewClient(opts ...option.RequestOption) (r Client) {
@@ -46,9 +44,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r = Client{Options: opts}
 
 	r.Chat = NewChatService(opts...)
-	r.Completions = NewCompletionService(opts...)
 	r.Embeddings = NewEmbeddingService(opts...)
-	r.Health = NewHealthService(opts...)
 	r.Models = NewModelService(opts...)
 
 	return
@@ -121,4 +117,12 @@ func (r *Client) Patch(ctx context.Context, path string, params any, res any, op
 // response.
 func (r *Client) Delete(ctx context.Context, path string, params any, res any, opts ...option.RequestOption) error {
 	return r.Execute(ctx, http.MethodDelete, path, params, res, opts...)
+}
+
+// Check the health of the service.
+func (r *Client) Health(ctx context.Context, opts ...option.RequestOption) (res *string, err error) {
+	opts = append(r.Options[:], opts...)
+	path := "v1/health"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
 }

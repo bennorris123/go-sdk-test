@@ -7,15 +7,17 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/bennorris123/go-sdk-test/internal/apijson"
-	"github.com/bennorris123/go-sdk-test/internal/requestconfig"
-	"github.com/bennorris123/go-sdk-test/option"
-	"github.com/bennorris123/go-sdk-test/packages/param"
-	"github.com/bennorris123/go-sdk-test/packages/respjson"
+	"github.com/stainless-sdks/relaxai-test-go/internal/apijson"
+	shimjson "github.com/stainless-sdks/relaxai-test-go/internal/encoding/json"
+	"github.com/stainless-sdks/relaxai-test-go/internal/requestconfig"
+	"github.com/stainless-sdks/relaxai-test-go/option"
+	"github.com/stainless-sdks/relaxai-test-go/packages/param"
+	"github.com/stainless-sdks/relaxai-test-go/packages/respjson"
+	"github.com/stainless-sdks/relaxai-test-go/shared"
 )
 
 // ChatService contains methods and other services that help with interacting with
-// the relaxai-test API.
+// the relaxai API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -34,7 +36,7 @@ func NewChatService(opts ...option.RequestOption) (r ChatService) {
 }
 
 // Creates a chat completion for the given model
-func (r *ChatService) NewCompletion(ctx context.Context, body ChatNewCompletionParams, opts ...option.RequestOption) (res *ChatNewCompletionResponse, err error) {
+func (r *ChatService) NewCompletion(ctx context.Context, body ChatNewCompletionParams, opts ...option.RequestOption) (res *ChatCompletionResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/chat/completions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -42,10 +44,10 @@ func (r *ChatService) NewCompletion(ctx context.Context, body ChatNewCompletionP
 }
 
 type ChatCompletionMessage struct {
-	MultiContent     []ChatCompletionMessageMultiContent `json:"MultiContent,required"`
+	Content          string                              `json:"content,required"`
 	Role             string                              `json:"role,required"`
-	Content          string                              `json:"content"`
 	FunctionCall     FunctionCall                        `json:"function_call"`
+	MultiContent     []ChatCompletionMessageMultiContent `json:"MultiContent"`
 	Name             string                              `json:"name"`
 	ReasoningContent string                              `json:"reasoning_content"`
 	Refusal          string                              `json:"refusal"`
@@ -53,10 +55,10 @@ type ChatCompletionMessage struct {
 	ToolCalls        []ChatCompletionMessageToolCall     `json:"tool_calls"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		MultiContent     respjson.Field
-		Role             respjson.Field
 		Content          respjson.Field
+		Role             respjson.Field
 		FunctionCall     respjson.Field
+		MultiContent     respjson.Field
 		Name             respjson.Field
 		ReasoningContent respjson.Field
 		Refusal          respjson.Field
@@ -142,16 +144,16 @@ func (r *ChatCompletionMessageToolCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The properties MultiContent, Role are required.
+// The properties Content, Role are required.
 type ChatCompletionMessageParam struct {
-	MultiContent     []ChatCompletionMessageMultiContentParam `json:"MultiContent,omitzero,required"`
+	Content          string                                   `json:"content,required"`
 	Role             string                                   `json:"role,required"`
-	Content          param.Opt[string]                        `json:"content,omitzero"`
 	Name             param.Opt[string]                        `json:"name,omitzero"`
 	ReasoningContent param.Opt[string]                        `json:"reasoning_content,omitzero"`
 	Refusal          param.Opt[string]                        `json:"refusal,omitzero"`
 	ToolCallID       param.Opt[string]                        `json:"tool_call_id,omitzero"`
 	FunctionCall     FunctionCallParam                        `json:"function_call,omitzero"`
+	MultiContent     []ChatCompletionMessageMultiContentParam `json:"MultiContent,omitzero"`
 	ToolCalls        []ChatCompletionMessageToolCallParam     `json:"tool_calls,omitzero"`
 	paramObj
 }
@@ -207,6 +209,239 @@ func (r ChatCompletionMessageToolCallParam) MarshalJSON() (data []byte, err erro
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *ChatCompletionMessageToolCallParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties Messages, Model are required.
+type ChatCompletionRequestParam struct {
+	Messages            []ChatCompletionMessageParam             `json:"messages,omitzero,required"`
+	Model               string                                   `json:"model,required"`
+	FrequencyPenalty    param.Opt[float64]                       `json:"frequency_penalty,omitzero"`
+	Logprobs            param.Opt[bool]                          `json:"logprobs,omitzero"`
+	MaxCompletionTokens param.Opt[int64]                         `json:"max_completion_tokens,omitzero"`
+	MaxTokens           param.Opt[int64]                         `json:"max_tokens,omitzero"`
+	N                   param.Opt[int64]                         `json:"n,omitzero"`
+	PresencePenalty     param.Opt[float64]                       `json:"presence_penalty,omitzero"`
+	ReasoningEffort     param.Opt[string]                        `json:"reasoning_effort,omitzero"`
+	Seed                param.Opt[int64]                         `json:"seed,omitzero"`
+	Store               param.Opt[bool]                          `json:"store,omitzero"`
+	Stream              param.Opt[bool]                          `json:"stream,omitzero"`
+	Temperature         param.Opt[float64]                       `json:"temperature,omitzero"`
+	TopLogprobs         param.Opt[int64]                         `json:"top_logprobs,omitzero"`
+	TopP                param.Opt[float64]                       `json:"top_p,omitzero"`
+	User                param.Opt[string]                        `json:"user,omitzero"`
+	ChatTemplateKwargs  any                                      `json:"chat_template_kwargs,omitzero"`
+	FunctionCall        any                                      `json:"function_call,omitzero"`
+	Functions           []FunctionDefinitionParam                `json:"functions,omitzero"`
+	LogitBias           map[string]int64                         `json:"logit_bias,omitzero"`
+	Metadata            map[string]string                        `json:"metadata,omitzero"`
+	ParallelToolCalls   any                                      `json:"parallel_tool_calls,omitzero"`
+	Prediction          ChatCompletionRequestPredictionParam     `json:"prediction,omitzero"`
+	ResponseFormat      ChatCompletionRequestResponseFormatParam `json:"response_format,omitzero"`
+	Stop                []string                                 `json:"stop,omitzero"`
+	StreamOptions       StreamOptionsParam                       `json:"stream_options,omitzero"`
+	ToolChoice          any                                      `json:"tool_choice,omitzero"`
+	Tools               []ChatCompletionRequestToolParam         `json:"tools,omitzero"`
+	paramObj
+}
+
+func (r ChatCompletionRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow ChatCompletionRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChatCompletionRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties Content, Type are required.
+type ChatCompletionRequestPredictionParam struct {
+	Content string `json:"content,required"`
+	Type    string `json:"type,required"`
+	paramObj
+}
+
+func (r ChatCompletionRequestPredictionParam) MarshalJSON() (data []byte, err error) {
+	type shadow ChatCompletionRequestPredictionParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChatCompletionRequestPredictionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionRequestResponseFormatParam struct {
+	Type       param.Opt[string]                                  `json:"type,omitzero"`
+	JsonSchema ChatCompletionRequestResponseFormatJsonSchemaParam `json:"json_schema,omitzero"`
+	paramObj
+}
+
+func (r ChatCompletionRequestResponseFormatParam) MarshalJSON() (data []byte, err error) {
+	type shadow ChatCompletionRequestResponseFormatParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChatCompletionRequestResponseFormatParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties Name, Strict are required.
+type ChatCompletionRequestResponseFormatJsonSchemaParam struct {
+	Name        string            `json:"name,required"`
+	Strict      bool              `json:"strict,required"`
+	Description param.Opt[string] `json:"description,omitzero"`
+	paramObj
+}
+
+func (r ChatCompletionRequestResponseFormatJsonSchemaParam) MarshalJSON() (data []byte, err error) {
+	type shadow ChatCompletionRequestResponseFormatJsonSchemaParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChatCompletionRequestResponseFormatJsonSchemaParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Type is required.
+type ChatCompletionRequestToolParam struct {
+	Type     string                  `json:"type,required"`
+	Function FunctionDefinitionParam `json:"function,omitzero"`
+	paramObj
+}
+
+func (r ChatCompletionRequestToolParam) MarshalJSON() (data []byte, err error) {
+	type shadow ChatCompletionRequestToolParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChatCompletionRequestToolParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionResponse struct {
+	ID                  string                                     `json:"id,required"`
+	Choices             []ChatCompletionResponseChoice             `json:"choices,required"`
+	Created             int64                                      `json:"created,required"`
+	HTTPHeader          map[string][]string                        `json:"httpHeader,required"`
+	Model               string                                     `json:"model,required"`
+	Object              string                                     `json:"object,required"`
+	SystemFingerprint   string                                     `json:"system_fingerprint,required"`
+	Usage               shared.OpenAIUsage                         `json:"usage,required"`
+	PromptFilterResults []ChatCompletionResponsePromptFilterResult `json:"prompt_filter_results"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID                  respjson.Field
+		Choices             respjson.Field
+		Created             respjson.Field
+		HTTPHeader          respjson.Field
+		Model               respjson.Field
+		Object              respjson.Field
+		SystemFingerprint   respjson.Field
+		Usage               respjson.Field
+		PromptFilterResults respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionResponse) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionResponseChoice struct {
+	FinishReason         string                               `json:"finish_reason,required"`
+	Index                int64                                `json:"index,required"`
+	Message              ChatCompletionMessage                `json:"message,required"`
+	ContentFilterResults ContentFilterResults                 `json:"content_filter_results"`
+	Logprobs             ChatCompletionResponseChoiceLogprobs `json:"logprobs"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FinishReason         respjson.Field
+		Index                respjson.Field
+		Message              respjson.Field
+		ContentFilterResults respjson.Field
+		Logprobs             respjson.Field
+		ExtraFields          map[string]respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionResponseChoice) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionResponseChoice) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionResponseChoiceLogprobs struct {
+	Content []ChatCompletionResponseChoiceLogprobsContent `json:"content,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Content     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionResponseChoiceLogprobs) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionResponseChoiceLogprobs) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionResponseChoiceLogprobsContent struct {
+	Token       string                                                  `json:"token,required"`
+	Logprob     float64                                                 `json:"logprob,required"`
+	TopLogprobs []ChatCompletionResponseChoiceLogprobsContentTopLogprob `json:"top_logprobs,required"`
+	Bytes       string                                                  `json:"bytes"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Token       respjson.Field
+		Logprob     respjson.Field
+		TopLogprobs respjson.Field
+		Bytes       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionResponseChoiceLogprobsContent) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionResponseChoiceLogprobsContent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionResponseChoiceLogprobsContentTopLogprob struct {
+	Token   string  `json:"token,required"`
+	Logprob float64 `json:"logprob,required"`
+	Bytes   string  `json:"bytes"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Token       respjson.Field
+		Logprob     respjson.Field
+		Bytes       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionResponseChoiceLogprobsContentTopLogprob) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionResponseChoiceLogprobsContentTopLogprob) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionResponsePromptFilterResult struct {
+	Index                int64                `json:"index,required"`
+	ContentFilterResults ContentFilterResults `json:"content_filter_results"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Index                respjson.Field
+		ContentFilterResults respjson.Field
+		ExtraFields          map[string]respjson.Field
+		raw                  string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionResponsePromptFilterResult) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionResponsePromptFilterResult) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -415,300 +650,14 @@ func (r *StreamOptionsParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type Usage struct {
-	CompletionTokens        int64                        `json:"completion_tokens,required"`
-	CompletionTokensDetails UsageCompletionTokensDetails `json:"completion_tokens_details,required"`
-	PromptTokens            int64                        `json:"prompt_tokens,required"`
-	PromptTokensDetails     UsagePromptTokensDetails     `json:"prompt_tokens_details,required"`
-	TotalTokens             int64                        `json:"total_tokens,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CompletionTokens        respjson.Field
-		CompletionTokensDetails respjson.Field
-		PromptTokens            respjson.Field
-		PromptTokensDetails     respjson.Field
-		TotalTokens             respjson.Field
-		ExtraFields             map[string]respjson.Field
-		raw                     string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r Usage) RawJSON() string { return r.JSON.raw }
-func (r *Usage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type UsageCompletionTokensDetails struct {
-	AcceptedPredictionTokens int64 `json:"accepted_prediction_tokens,required"`
-	AudioTokens              int64 `json:"audio_tokens,required"`
-	ReasoningTokens          int64 `json:"reasoning_tokens,required"`
-	RejectedPredictionTokens int64 `json:"rejected_prediction_tokens,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AcceptedPredictionTokens respjson.Field
-		AudioTokens              respjson.Field
-		ReasoningTokens          respjson.Field
-		RejectedPredictionTokens respjson.Field
-		ExtraFields              map[string]respjson.Field
-		raw                      string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r UsageCompletionTokensDetails) RawJSON() string { return r.JSON.raw }
-func (r *UsageCompletionTokensDetails) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type UsagePromptTokensDetails struct {
-	AudioTokens  int64 `json:"audio_tokens,required"`
-	CachedTokens int64 `json:"cached_tokens,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		AudioTokens  respjson.Field
-		CachedTokens respjson.Field
-		ExtraFields  map[string]respjson.Field
-		raw          string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r UsagePromptTokensDetails) RawJSON() string { return r.JSON.raw }
-func (r *UsagePromptTokensDetails) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ChatNewCompletionResponse struct {
-	ID                  string                                        `json:"id,required"`
-	Choices             []ChatNewCompletionResponseChoice             `json:"choices,required"`
-	Created             int64                                         `json:"created,required"`
-	HTTPHeader          map[string][]string                           `json:"httpHeader,required"`
-	Model               string                                        `json:"model,required"`
-	Object              string                                        `json:"object,required"`
-	SystemFingerprint   string                                        `json:"system_fingerprint,required"`
-	Usage               Usage                                         `json:"usage,required"`
-	PromptFilterResults []ChatNewCompletionResponsePromptFilterResult `json:"prompt_filter_results"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID                  respjson.Field
-		Choices             respjson.Field
-		Created             respjson.Field
-		HTTPHeader          respjson.Field
-		Model               respjson.Field
-		Object              respjson.Field
-		SystemFingerprint   respjson.Field
-		Usage               respjson.Field
-		PromptFilterResults respjson.Field
-		ExtraFields         map[string]respjson.Field
-		raw                 string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatNewCompletionResponse) RawJSON() string { return r.JSON.raw }
-func (r *ChatNewCompletionResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ChatNewCompletionResponseChoice struct {
-	FinishReason         string                                  `json:"finish_reason,required"`
-	Index                int64                                   `json:"index,required"`
-	Message              ChatCompletionMessage                   `json:"message,required"`
-	ContentFilterResults ContentFilterResults                    `json:"content_filter_results"`
-	Logprobs             ChatNewCompletionResponseChoiceLogprobs `json:"logprobs"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		FinishReason         respjson.Field
-		Index                respjson.Field
-		Message              respjson.Field
-		ContentFilterResults respjson.Field
-		Logprobs             respjson.Field
-		ExtraFields          map[string]respjson.Field
-		raw                  string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatNewCompletionResponseChoice) RawJSON() string { return r.JSON.raw }
-func (r *ChatNewCompletionResponseChoice) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ChatNewCompletionResponseChoiceLogprobs struct {
-	Content []ChatNewCompletionResponseChoiceLogprobsContent `json:"content,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatNewCompletionResponseChoiceLogprobs) RawJSON() string { return r.JSON.raw }
-func (r *ChatNewCompletionResponseChoiceLogprobs) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ChatNewCompletionResponseChoiceLogprobsContent struct {
-	Token       string                                                     `json:"token,required"`
-	Logprob     float64                                                    `json:"logprob,required"`
-	TopLogprobs []ChatNewCompletionResponseChoiceLogprobsContentTopLogprob `json:"top_logprobs,required"`
-	Bytes       string                                                     `json:"bytes"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Token       respjson.Field
-		Logprob     respjson.Field
-		TopLogprobs respjson.Field
-		Bytes       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatNewCompletionResponseChoiceLogprobsContent) RawJSON() string { return r.JSON.raw }
-func (r *ChatNewCompletionResponseChoiceLogprobsContent) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ChatNewCompletionResponseChoiceLogprobsContentTopLogprob struct {
-	Token   string  `json:"token,required"`
-	Logprob float64 `json:"logprob,required"`
-	Bytes   string  `json:"bytes"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Token       respjson.Field
-		Logprob     respjson.Field
-		Bytes       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatNewCompletionResponseChoiceLogprobsContentTopLogprob) RawJSON() string { return r.JSON.raw }
-func (r *ChatNewCompletionResponseChoiceLogprobsContentTopLogprob) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ChatNewCompletionResponsePromptFilterResult struct {
-	Index                int64                `json:"index,required"`
-	ContentFilterResults ContentFilterResults `json:"content_filter_results"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Index                respjson.Field
-		ContentFilterResults respjson.Field
-		ExtraFields          map[string]respjson.Field
-		raw                  string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatNewCompletionResponsePromptFilterResult) RawJSON() string { return r.JSON.raw }
-func (r *ChatNewCompletionResponsePromptFilterResult) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type ChatNewCompletionParams struct {
-	Messages            []ChatCompletionMessageParam          `json:"messages,omitzero,required"`
-	Model               string                                `json:"model,required"`
-	FrequencyPenalty    param.Opt[float64]                    `json:"frequency_penalty,omitzero"`
-	Logprobs            param.Opt[bool]                       `json:"logprobs,omitzero"`
-	MaxCompletionTokens param.Opt[int64]                      `json:"max_completion_tokens,omitzero"`
-	MaxTokens           param.Opt[int64]                      `json:"max_tokens,omitzero"`
-	N                   param.Opt[int64]                      `json:"n,omitzero"`
-	PresencePenalty     param.Opt[float64]                    `json:"presence_penalty,omitzero"`
-	ReasoningEffort     param.Opt[string]                     `json:"reasoning_effort,omitzero"`
-	Seed                param.Opt[int64]                      `json:"seed,omitzero"`
-	Store               param.Opt[bool]                       `json:"store,omitzero"`
-	Stream              param.Opt[bool]                       `json:"stream,omitzero"`
-	Temperature         param.Opt[float64]                    `json:"temperature,omitzero"`
-	TopLogprobs         param.Opt[int64]                      `json:"top_logprobs,omitzero"`
-	TopP                param.Opt[float64]                    `json:"top_p,omitzero"`
-	User                param.Opt[string]                     `json:"user,omitzero"`
-	ChatTemplateKwargs  any                                   `json:"chat_template_kwargs,omitzero"`
-	FunctionCall        any                                   `json:"function_call,omitzero"`
-	Functions           []FunctionDefinitionParam             `json:"functions,omitzero"`
-	LogitBias           map[string]int64                      `json:"logit_bias,omitzero"`
-	Metadata            map[string]string                     `json:"metadata,omitzero"`
-	ParallelToolCalls   any                                   `json:"parallel_tool_calls,omitzero"`
-	Prediction          ChatNewCompletionParamsPrediction     `json:"prediction,omitzero"`
-	ResponseFormat      ChatNewCompletionParamsResponseFormat `json:"response_format,omitzero"`
-	Stop                []string                              `json:"stop,omitzero"`
-	StreamOptions       StreamOptionsParam                    `json:"stream_options,omitzero"`
-	ToolChoice          any                                   `json:"tool_choice,omitzero"`
-	Tools               []ChatNewCompletionParamsTool         `json:"tools,omitzero"`
+	ChatCompletionRequest ChatCompletionRequestParam
 	paramObj
 }
 
 func (r ChatNewCompletionParams) MarshalJSON() (data []byte, err error) {
-	type shadow ChatNewCompletionParams
-	return param.MarshalObject(r, (*shadow)(&r))
+	return shimjson.Marshal(r.ChatCompletionRequest)
 }
 func (r *ChatNewCompletionParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The properties Content, Type are required.
-type ChatNewCompletionParamsPrediction struct {
-	Content string `json:"content,required"`
-	Type    string `json:"type,required"`
-	paramObj
-}
-
-func (r ChatNewCompletionParamsPrediction) MarshalJSON() (data []byte, err error) {
-	type shadow ChatNewCompletionParamsPrediction
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ChatNewCompletionParamsPrediction) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ChatNewCompletionParamsResponseFormat struct {
-	Type       param.Opt[string]                               `json:"type,omitzero"`
-	JsonSchema ChatNewCompletionParamsResponseFormatJsonSchema `json:"json_schema,omitzero"`
-	paramObj
-}
-
-func (r ChatNewCompletionParamsResponseFormat) MarshalJSON() (data []byte, err error) {
-	type shadow ChatNewCompletionParamsResponseFormat
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ChatNewCompletionParamsResponseFormat) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The properties Name, Schema, Strict are required.
-type ChatNewCompletionParamsResponseFormatJsonSchema struct {
-	Name string `json:"name,required"`
-	// JSON schema object
-	Schema      map[string]any    `json:"schema,omitzero,required"`
-	Strict      bool              `json:"strict,required"`
-	Description param.Opt[string] `json:"description,omitzero"`
-	paramObj
-}
-
-func (r ChatNewCompletionParamsResponseFormatJsonSchema) MarshalJSON() (data []byte, err error) {
-	type shadow ChatNewCompletionParamsResponseFormatJsonSchema
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ChatNewCompletionParamsResponseFormatJsonSchema) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The property Type is required.
-type ChatNewCompletionParamsTool struct {
-	Type     string                  `json:"type,required"`
-	Function FunctionDefinitionParam `json:"function,omitzero"`
-	paramObj
-}
-
-func (r ChatNewCompletionParamsTool) MarshalJSON() (data []byte, err error) {
-	type shadow ChatNewCompletionParamsTool
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ChatNewCompletionParamsTool) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+	return json.Unmarshal(data, &r.ChatCompletionRequest)
 }

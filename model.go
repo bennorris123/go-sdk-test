@@ -8,14 +8,14 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/bennorris123/go-sdk-test/internal/apijson"
-	"github.com/bennorris123/go-sdk-test/internal/requestconfig"
-	"github.com/bennorris123/go-sdk-test/option"
-	"github.com/bennorris123/go-sdk-test/packages/respjson"
+	"github.com/stainless-sdks/relaxai-test-go/internal/apijson"
+	"github.com/stainless-sdks/relaxai-test-go/internal/requestconfig"
+	"github.com/stainless-sdks/relaxai-test-go/option"
+	"github.com/stainless-sdks/relaxai-test-go/packages/respjson"
 )
 
 // ModelService contains methods and other services that help with interacting with
-// the relaxai-test API.
+// the relaxai API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -33,22 +33,22 @@ func NewModelService(opts ...option.RequestOption) (r ModelService) {
 	return
 }
 
+// List all the available models
+func (r *ModelService) ListModels(ctx context.Context, opts ...option.RequestOption) (res *ModelList, err error) {
+	opts = append(r.Options[:], opts...)
+	path := "v1/models"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
+}
+
 // Get the details of the given model
-func (r *ModelService) Get(ctx context.Context, model string, opts ...option.RequestOption) (res *Model, err error) {
+func (r *ModelService) GetModel(ctx context.Context, model string, opts ...option.RequestOption) (res *Model, err error) {
 	opts = append(r.Options[:], opts...)
 	if model == "" {
 		err = errors.New("missing required model parameter")
 		return
 	}
 	path := fmt.Sprintf("v1/models/%s", model)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
-}
-
-// List all the available models
-func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (res *ModelListResponse, err error) {
-	opts = append(r.Options[:], opts...)
-	path := "v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
@@ -121,7 +121,7 @@ func (r *ModelPermission) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ModelListResponse struct {
+type ModelList struct {
 	Data       []Model             `json:"data,required"`
 	HTTPHeader map[string][]string `json:"httpHeader,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -134,7 +134,7 @@ type ModelListResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ModelListResponse) RawJSON() string { return r.JSON.raw }
-func (r *ModelListResponse) UnmarshalJSON(data []byte) error {
+func (r ModelList) RawJSON() string { return r.JSON.raw }
+func (r *ModelList) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }

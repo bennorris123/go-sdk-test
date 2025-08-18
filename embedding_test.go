@@ -8,12 +8,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/bennorris123/go-sdk-test"
-	"github.com/bennorris123/go-sdk-test/internal/testutil"
-	"github.com/bennorris123/go-sdk-test/option"
+	"github.com/stainless-sdks/relaxai-test-go"
+	"github.com/stainless-sdks/relaxai-test-go/internal/testutil"
+	"github.com/stainless-sdks/relaxai-test-go/option"
 )
 
-func TestEmbeddingNewWithOptionalParams(t *testing.T) {
+func TestEmbeddingNewEmbeddingWithOptionalParams(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,12 +26,14 @@ func TestEmbeddingNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Embeddings.New(context.TODO(), relaxaitest.EmbeddingNewParams{
-		Input:          map[string]interface{}{},
-		Model:          "model",
-		Dimensions:     relaxaitest.Int(0),
-		EncodingFormat: relaxaitest.String("encoding_format"),
-		User:           relaxaitest.String("user"),
+	_, err := client.Embeddings.NewEmbedding(context.TODO(), relaxaitest.EmbeddingNewEmbeddingParams{
+		EmbeddingRequest: relaxaitest.EmbeddingRequestParam{
+			Input:          map[string]interface{}{},
+			Model:          "model",
+			Dimensions:     relaxaitest.Int(0),
+			EncodingFormat: relaxaitest.String("encoding_format"),
+			User:           relaxaitest.String("user"),
+		},
 	})
 	if err != nil {
 		var apierr *relaxaitest.Error
