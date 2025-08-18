@@ -2,7 +2,7 @@ package param_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/relaxai-test-go/packages/param"
+	"github.com/bennorris123/go-sdk-test/packages/param"
 	"testing"
 )
 

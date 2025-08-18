@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/stainless-sdks/relaxai-test-go/internal/apijson"
-	"github.com/stainless-sdks/relaxai-test-go/internal/requestconfig"
-	"github.com/stainless-sdks/relaxai-test-go/option"
-	"github.com/stainless-sdks/relaxai-test-go/packages/respjson"
+	"github.com/bennorris123/go-sdk-test/internal/apijson"
+	"github.com/bennorris123/go-sdk-test/internal/requestconfig"
+	"github.com/bennorris123/go-sdk-test/option"
+	"github.com/bennorris123/go-sdk-test/packages/respjson"
 )
 
 // ModelService contains methods and other services that help with interacting with

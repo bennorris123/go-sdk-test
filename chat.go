@@ -7,13 +7,13 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/stainless-sdks/relaxai-test-go/internal/apijson"
-	shimjson "github.com/stainless-sdks/relaxai-test-go/internal/encoding/json"
-	"github.com/stainless-sdks/relaxai-test-go/internal/requestconfig"
-	"github.com/stainless-sdks/relaxai-test-go/option"
-	"github.com/stainless-sdks/relaxai-test-go/packages/param"
-	"github.com/stainless-sdks/relaxai-test-go/packages/respjson"
-	"github.com/stainless-sdks/relaxai-test-go/shared"
+	"github.com/bennorris123/go-sdk-test/internal/apijson"
+	shimjson "github.com/bennorris123/go-sdk-test/internal/encoding/json"
+	"github.com/bennorris123/go-sdk-test/internal/requestconfig"
+	"github.com/bennorris123/go-sdk-test/option"
+	"github.com/bennorris123/go-sdk-test/packages/param"
+	"github.com/bennorris123/go-sdk-test/packages/respjson"
+	"github.com/bennorris123/go-sdk-test/shared"
 )
 
 // ChatService contains methods and other services that help with interacting with

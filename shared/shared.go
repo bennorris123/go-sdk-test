@@ -3,9 +3,9 @@
 package shared
 
 import (
-	"github.com/stainless-sdks/relaxai-test-go/internal/apijson"
-	"github.com/stainless-sdks/relaxai-test-go/packages/param"
-	"github.com/stainless-sdks/relaxai-test-go/packages/respjson"
+	"github.com/bennorris123/go-sdk-test/internal/apijson"
+	"github.com/bennorris123/go-sdk-test/packages/param"
+	"github.com/bennorris123/go-sdk-test/packages/respjson"
 )
 
 // aliased to make [param.APIUnion] private when embedding
