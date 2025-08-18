@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bennorris123/go-sdk-test/packages/param"
+	"github.com/stainless-sdks/relaxai-test-go/packages/param"
 )
 
 var encoders sync.Map // map[reflect.Type]encoderFunc

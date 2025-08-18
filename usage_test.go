@@ -7,9 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/bennorris123/go-sdk-test"
-	"github.com/bennorris123/go-sdk-test/internal/testutil"
-	"github.com/bennorris123/go-sdk-test/option"
+	"github.com/stainless-sdks/relaxai-test-go"
+	"github.com/stainless-sdks/relaxai-test-go/internal/testutil"
+	"github.com/stainless-sdks/relaxai-test-go/option"
 )
 
 func TestUsage(t *testing.T) {
@@ -24,15 +24,17 @@ func TestUsage(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	response, err := client.Chat.NewCompletion(context.TODO(), relaxaitest.ChatNewCompletionParams{
-		Messages: []relaxaitest.ChatCompletionMessageParam{{
-			MultiContent: []relaxaitest.ChatCompletionMessageMultiContentParam{{}},
-			Role:         "role",
-		}},
-		Model: "model",
+	chatCompletionResponse, err := client.Chat.NewCompletion(context.TODO(), relaxaitest.ChatNewCompletionParams{
+		ChatCompletionRequest: relaxaitest.ChatCompletionRequestParam{
+			Messages: []relaxaitest.ChatCompletionMessageParam{{
+				Content: "content",
+				Role:    "role",
+			}},
+			Model: "model",
+		},
 	})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	t.Logf("%+v\n", response.ID)
+	t.Logf("%+v\n", chatCompletionResponse.Choices)
 }

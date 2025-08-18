@@ -3,8 +3,8 @@ package apijson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bennorris123/go-sdk-test/internal/apijson"
-	"github.com/bennorris123/go-sdk-test/packages/param"
+	"github.com/stainless-sdks/relaxai-test-go/internal/apijson"
+	"github.com/stainless-sdks/relaxai-test-go/packages/param"
 	"reflect"
 	"testing"
 )
