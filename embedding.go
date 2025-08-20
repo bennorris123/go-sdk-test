@@ -4,17 +4,20 @@ package relaxaitest
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 
-	"github.com/relax-ai/go-sdk/internal/apijson"
-	"github.com/relax-ai/go-sdk/internal/requestconfig"
-	"github.com/relax-ai/go-sdk/option"
-	"github.com/relax-ai/go-sdk/packages/param"
-	"github.com/relax-ai/go-sdk/packages/respjson"
+	"github.com/bennorris123/go-sdk-test/internal/apijson"
+	shimjson "github.com/bennorris123/go-sdk-test/internal/encoding/json"
+	"github.com/bennorris123/go-sdk-test/internal/requestconfig"
+	"github.com/bennorris123/go-sdk-test/option"
+	"github.com/bennorris123/go-sdk-test/packages/param"
+	"github.com/bennorris123/go-sdk-test/packages/respjson"
+	"github.com/bennorris123/go-sdk-test/shared"
 )
 
 // EmbeddingService contains methods and other services that help with interacting
-// with the relaxai-test API.
+// with the relaxai API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -33,19 +36,37 @@ func NewEmbeddingService(opts ...option.RequestOption) (r EmbeddingService) {
 }
 
 // Creates an embedding vector representing the input text.
-func (r *EmbeddingService) New(ctx context.Context, body EmbeddingNewParams, opts ...option.RequestOption) (res *EmbeddingNewResponse, err error) {
+func (r *EmbeddingService) NewEmbedding(ctx context.Context, body EmbeddingNewEmbeddingParams, opts ...option.RequestOption) (res *EmbeddingResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/embeddings"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
-type EmbeddingNewResponse struct {
-	Data       []EmbeddingNewResponseData `json:"data,required"`
-	HTTPHeader map[string][]string        `json:"httpHeader,required"`
-	Model      string                     `json:"model,required"`
-	Object     string                     `json:"object,required"`
-	Usage      Usage                      `json:"usage,required"`
+// The properties Input, Model are required.
+type EmbeddingRequestParam struct {
+	Input          any               `json:"input,omitzero,required"`
+	Model          string            `json:"model,required"`
+	Dimensions     param.Opt[int64]  `json:"dimensions,omitzero"`
+	EncodingFormat param.Opt[string] `json:"encoding_format,omitzero"`
+	User           param.Opt[string] `json:"user,omitzero"`
+	paramObj
+}
+
+func (r EmbeddingRequestParam) MarshalJSON() (data []byte, err error) {
+	type shadow EmbeddingRequestParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *EmbeddingRequestParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type EmbeddingResponse struct {
+	Data       []EmbeddingResponseData `json:"data,required"`
+	HTTPHeader map[string][]string     `json:"httpHeader,required"`
+	Model      string                  `json:"model,required"`
+	Object     string                  `json:"object,required"`
+	Usage      shared.OpenAIUsage      `json:"usage,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -59,12 +80,12 @@ type EmbeddingNewResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r EmbeddingNewResponse) RawJSON() string { return r.JSON.raw }
-func (r *EmbeddingNewResponse) UnmarshalJSON(data []byte) error {
+func (r EmbeddingResponse) RawJSON() string { return r.JSON.raw }
+func (r *EmbeddingResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type EmbeddingNewResponseData struct {
+type EmbeddingResponseData struct {
 	Embedding []float64 `json:"embedding,required"`
 	Index     int64     `json:"index,required"`
 	Object    string    `json:"object,required"`
@@ -79,24 +100,19 @@ type EmbeddingNewResponseData struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r EmbeddingNewResponseData) RawJSON() string { return r.JSON.raw }
-func (r *EmbeddingNewResponseData) UnmarshalJSON(data []byte) error {
+func (r EmbeddingResponseData) RawJSON() string { return r.JSON.raw }
+func (r *EmbeddingResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type EmbeddingNewParams struct {
-	Input          any               `json:"input,omitzero,required"`
-	Model          string            `json:"model,required"`
-	Dimensions     param.Opt[int64]  `json:"dimensions,omitzero"`
-	EncodingFormat param.Opt[string] `json:"encoding_format,omitzero"`
-	User           param.Opt[string] `json:"user,omitzero"`
+type EmbeddingNewEmbeddingParams struct {
+	EmbeddingRequest EmbeddingRequestParam
 	paramObj
 }
 
-func (r EmbeddingNewParams) MarshalJSON() (data []byte, err error) {
-	type shadow EmbeddingNewParams
-	return param.MarshalObject(r, (*shadow)(&r))
+func (r EmbeddingNewEmbeddingParams) MarshalJSON() (data []byte, err error) {
+	return shimjson.Marshal(r.EmbeddingRequest)
 }
-func (r *EmbeddingNewParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+func (r *EmbeddingNewEmbeddingParams) UnmarshalJSON(data []byte) error {
+	return json.Unmarshal(data, &r.EmbeddingRequest)
 }

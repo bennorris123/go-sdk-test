@@ -2,8 +2,8 @@ package apijson_test
 
 import (
 	"encoding/json"
-	"github.com/relax-ai/go-sdk/internal/apijson"
-	"github.com/relax-ai/go-sdk/packages/respjson"
+	"github.com/bennorris123/go-sdk-test/internal/apijson"
+	"github.com/bennorris123/go-sdk-test/packages/respjson"
 	"testing"
 )
 

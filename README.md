@@ -1,8 +1,8 @@
-# Relaxai Test Go API Library
+# Relaxai Go API Library
 
-<a href="https://pkg.go.dev/github.com/relax-ai/go-sdk"><img src="https://pkg.go.dev/badge/github.com/relax-ai/go-sdk.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/bennorris123/go-sdk-test"><img src="https://pkg.go.dev/badge/github.com/bennorris123/go-sdk-test.svg" alt="Go Reference"></a>
 
-The Relaxai Test Go library provides convenient access to the [Relaxai Test REST API](https://www.relax.ai)
+The Relaxai Go library provides convenient access to the [Relaxai REST API](https://www.relax.ai)
 from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
@@ -13,7 +13,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ```go
 import (
-	"github.com/relax-ai/go-sdk" // imported as relaxaitest
+	"github.com/bennorris123/go-sdk-test" // imported as relaxaitest
 )
 ```
 
@@ -24,7 +24,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/relax-ai/go-sdk@v0.0.1'
+go get -u 'github.com/bennorris123/go-sdk-test@v0.1.0'
 ```
 
 <!-- x-release-please-end -->
@@ -44,25 +44,27 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/relax-ai/go-sdk"
-	"github.com/relax-ai/go-sdk/option"
+	"github.com/bennorris123/go-sdk-test"
+	"github.com/bennorris123/go-sdk-test/option"
 )
 
 func main() {
 	client := relaxaitest.NewClient(
-		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("RELAXAI_TEST_API_KEY")
+		option.WithAPIKey("My API Key"), // defaults to os.LookupEnv("RELAXAI_API_KEY")
 	)
-	response, err := client.Chat.NewCompletion(context.TODO(), relaxaitest.ChatNewCompletionParams{
-		Messages: []relaxaitest.ChatCompletionMessageParam{{
-			MultiContent: []relaxaitest.ChatCompletionMessageMultiContentParam{{}},
-			Role:         "role",
-		}},
-		Model: "model",
+	chatCompletionResponse, err := client.Chat.NewCompletion(context.TODO(), relaxaitest.ChatNewCompletionParams{
+		ChatCompletionRequest: relaxaitest.ChatCompletionRequestParam{
+			Messages: []relaxaitest.ChatCompletionMessageParam{{
+				Content: "content",
+				Role:    "role",
+			}},
+			Model: "model",
+		},
 	})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", response.ID)
+	fmt.Printf("%+v\n", chatCompletionResponse.Choices)
 }
 
 ```
@@ -278,7 +280,7 @@ client.Chat.NewCompletion(context.TODO(), ...,
 
 The request option `option.WithDebugLog(nil)` may be helpful while debugging.
 
-See the [full list of request options](https://pkg.go.dev/github.com/relax-ai/go-sdk/option).
+See the [full list of request options](https://pkg.go.dev/github.com/bennorris123/go-sdk-test/option).
 
 ### Pagination
 
@@ -300,11 +302,13 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
 _, err := client.Chat.NewCompletion(context.TODO(), relaxaitest.ChatNewCompletionParams{
-	Messages: []relaxaitest.ChatCompletionMessageParam{{
-		MultiContent: []relaxaitest.ChatCompletionMessageMultiContentParam{{}},
-		Role:         "role",
-	}},
-	Model: "model",
+	ChatCompletionRequest: relaxaitest.ChatCompletionRequestParam{
+		Messages: []relaxaitest.ChatCompletionMessageParam{{
+			Content: "content",
+			Role:    "role",
+		}},
+		Model: "model",
+	},
 })
 if err != nil {
 	var apierr *relaxaitest.Error
@@ -333,11 +337,13 @@ defer cancel()
 client.Chat.NewCompletion(
 	ctx,
 	relaxaitest.ChatNewCompletionParams{
-		Messages: []relaxaitest.ChatCompletionMessageParam{{
-			MultiContent: []relaxaitest.ChatCompletionMessageMultiContentParam{{}},
-			Role:         "role",
-		}},
-		Model: "model",
+		ChatCompletionRequest: relaxaitest.ChatCompletionRequestParam{
+			Messages: []relaxaitest.ChatCompletionMessageParam{{
+				Content: "content",
+				Role:    "role",
+			}},
+			Model: "model",
+		},
 	},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
@@ -375,11 +381,13 @@ client := relaxaitest.NewClient(
 client.Chat.NewCompletion(
 	context.TODO(),
 	relaxaitest.ChatNewCompletionParams{
-		Messages: []relaxaitest.ChatCompletionMessageParam{{
-			MultiContent: []relaxaitest.ChatCompletionMessageMultiContentParam{{}},
-			Role:         "role",
-		}},
-		Model: "model",
+		ChatCompletionRequest: relaxaitest.ChatCompletionRequestParam{
+			Messages: []relaxaitest.ChatCompletionMessageParam{{
+				Content: "content",
+				Role:    "role",
+			}},
+			Model: "model",
+		},
 	},
 	option.WithMaxRetries(5),
 )
@@ -393,21 +401,23 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-response, err := client.Chat.NewCompletion(
+chatCompletionResponse, err := client.Chat.NewCompletion(
 	context.TODO(),
 	relaxaitest.ChatNewCompletionParams{
-		Messages: []relaxaitest.ChatCompletionMessageParam{{
-			MultiContent: []relaxaitest.ChatCompletionMessageMultiContentParam{{}},
-			Role:         "role",
-		}},
-		Model: "model",
+		ChatCompletionRequest: relaxaitest.ChatCompletionRequestParam{
+			Messages: []relaxaitest.ChatCompletionMessageParam{{
+				Content: "content",
+				Role:    "role",
+			}},
+			Model: "model",
+		},
 	},
 	option.WithResponseInto(&response),
 )
 if err != nil {
 	// handle error
 }
-fmt.Printf("%+v\n", response)
+fmt.Printf("%+v\n", chatCompletionResponse)
 
 fmt.Printf("Status Code: %d\n", response.StatusCode)
 fmt.Printf("Headers: %+#v\n", response.Header)
@@ -508,7 +518,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/relax-ai/go-sdk/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/bennorris123/go-sdk-test/issues) with questions, bugs, or suggestions.
 
 ## Contributing
 

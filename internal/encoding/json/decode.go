@@ -14,7 +14,7 @@ import (
 	"encoding"
 	"encoding/base64"
 	"fmt"
-	"github.com/relax-ai/go-sdk/internal/encoding/json/shims"
+	"github.com/bennorris123/go-sdk-test/internal/encoding/json/shims"
 	"reflect"
 	"strconv"
 	"strings"

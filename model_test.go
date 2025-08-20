@@ -8,12 +8,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/relax-ai/go-sdk"
-	"github.com/relax-ai/go-sdk/internal/testutil"
-	"github.com/relax-ai/go-sdk/option"
+	"github.com/bennorris123/go-sdk-test"
+	"github.com/bennorris123/go-sdk-test/internal/testutil"
+	"github.com/bennorris123/go-sdk-test/option"
 )
 
-func TestModelGet(t *testing.T) {
+func TestModelListModels(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -26,7 +26,7 @@ func TestModelGet(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Models.Get(context.TODO(), "model")
+	_, err := client.Models.ListModels(context.TODO())
 	if err != nil {
 		var apierr *relaxaitest.Error
 		if errors.As(err, &apierr) {
@@ -36,7 +36,7 @@ func TestModelGet(t *testing.T) {
 	}
 }
 
-func TestModelList(t *testing.T) {
+func TestModelGetModel(t *testing.T) {
 	t.Skip("Prism tests are disabled")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -49,7 +49,7 @@ func TestModelList(t *testing.T) {
 		option.WithBaseURL(baseURL),
 		option.WithAPIKey("My API Key"),
 	)
-	_, err := client.Models.List(context.TODO())
+	_, err := client.Models.GetModel(context.TODO(), "model")
 	if err != nil {
 		var apierr *relaxaitest.Error
 		if errors.As(err, &apierr) {

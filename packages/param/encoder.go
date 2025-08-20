@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	shimjson "github.com/relax-ai/go-sdk/internal/encoding/json"
+	shimjson "github.com/bennorris123/go-sdk-test/internal/encoding/json"
 
 	"github.com/tidwall/sjson"
 )
